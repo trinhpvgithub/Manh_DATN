@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Name>Nhom3</Name>
+		<FullClassName>Nhom3.ClassMain</FullClassName>
+		<Text>Tinh Toan Cot</Text>
+		<Description>Show Hello World.</Description>
+		<VisibilityMode>AlwaysVisible</VisibilityMode>
+		<Assembly>Nhom3.dll</Assembly>
+		<AddInId>5E9EE7AE-CC76-4E67-B655-B60B75B03D04</AddInId>
+		<VendorId>ADSK</VendorId>
+		<VendorDescription>Autodesk, Inc, www.autodesk.com</VendorDescription>
+	</AddIn>
+</RevitAddIns>
