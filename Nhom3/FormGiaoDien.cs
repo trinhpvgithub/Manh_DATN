@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
-using DevExpress.XtraBars;
 
 namespace Nhom3
 {
