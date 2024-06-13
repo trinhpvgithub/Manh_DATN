@@ -374,8 +374,8 @@ namespace Nhom3
                 try
                 {
                     cls_columns cls = new cls_columns();
-                    string cot = cell.Cells[0].Value.ToString();
-                    cls.Stt = cot;
+                    //string cot = cell.Cells[0].Value.ToString();
+                    //cls.Stt = cot;
                     string vitri = cell.Cells[1].Value.ToString();
                     cls.Id = vitri;
                     string name = cell.Cells[2].Value.ToString();
@@ -442,29 +442,29 @@ namespace Nhom3
 
         private void button7_Click(object sender, EventArgs e)
         {
-            List<int> lstint = ExtractNumbersFromTextBox(textBox10);
-            try
-            {
-                cls_modul.cotvethep.Clear();
-                dataGridView2.Rows.Clear();
-                foreach (int a in lstint)
-                {
-                    foreach (cls_columns cls in cls_modul.danhsachcot)
-                    {
-                        if (a.ToString() == cls.Id)
-                        {
-                            cls_modul.cotvethep.Add(cls);
-                            dataGridView2.Rows.Add(cls.Stt, cls.Id, cls.Name, cls.B, cls.H, cls.L, cls.Asyc, cls.Phi, cls.Sophi, cls.Astt, cls.Thepdai, cls.Kcdai);
-                        }
-                    }
+            //List<int> lstint = ExtractNumbersFromTextBox(textBox10);
+            //try
+            //{
+            //    cls_modul.cotvethep.Clear();
+            //    dataGridView2.Rows.Clear();
+            //    foreach (int a in lstint)
+            //    {
+            //        foreach (cls_columns cls in cls_modul.danhsachcot)
+            //        {
+            //            if (a.ToString() == cls.Id)
+            //            {
+            //                cls_modul.cotvethep.Add(cls);
+            //                dataGridView2.Rows.Add(cls.Stt, cls.Id, cls.Name, cls.B, cls.H, cls.L, cls.Asyc, cls.Phi, cls.Sophi, cls.Astt, cls.Thepdai, cls.Kcdai);
+            //            }
+            //        }
 
-                }
+            //    }
 
-            }
-            catch
-            {
-                MessageBox.Show("Chưa chọn đối tượng.");
-            }
+            //}
+            //catch
+            //{
+            //    MessageBox.Show("Chưa chọn đối tượng.");
+            //}
         }
         private List<int> ExtractNumbersFromTextBox(TextBox textBox)
         {
@@ -505,5 +505,133 @@ namespace Nhom3
         {
             DialogResult = DialogResult.Yes;
         }
-    }
+
+		private void button13_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+		}
+
+		private void button8_Click(object sender, EventArgs e)
+		{
+			cls_modul.danhsachcot.Clear();
+			//lọc qua các hàng kiểm tra điều kiện As ->> đưa ra kết quả
+			foreach (DataGridViewRow cell in dataGridView1.Rows)
+			{
+				try
+				{
+					cls_columns cls = new cls_columns();
+					//string cot = cell.Cells[0].Value.ToString();
+					//cls.Stt = cot;
+					string vitri = cell.Cells[1].Value.ToString();
+					cls.Id = vitri;
+					string name = cell.Cells[2].Value.ToString();
+					cls.Name = name;
+					string width = cell.Cells[3].Value.ToString();
+					cls.B = width;
+					string heigh = cell.Cells[4].Value.ToString();
+					cls.H = heigh;
+					string lengh = cell.Cells[5].Value.ToString();
+					cls.L = lengh;
+					string a = cell.Cells[6].Value.ToString();
+					cls.A = a;
+					string mchancot = cell.Cells[7].Value.ToString();
+					cls.Mchancot = mchancot;
+					string nchancot = cell.Cells[8].Value.ToString();
+					cls.Nchancot = nchancot;
+					string mdinhcot = cell.Cells[9].Value.ToString();
+					cls.Mdinhcot = mdinhcot;
+					string ndinhcot = cell.Cells[10].Value.ToString();
+					cls.Ndinhcot = ndinhcot;
+
+					string Asyc = cell.Cells[11].Value.ToString();
+					cls.Asyc = Asyc;
+					string Phi = cell.Cells[12].Value.ToString();
+					cls.Phi = Phi;
+					string Thanh = cell.Cells[13].Value.ToString();
+					cls.Sophi = Thanh;
+					// diện tích cốt thép tính toán
+					double Astt = Math.Round(Astinhtoan(Convert.ToDouble(Phi), Convert.ToDouble(Thanh)), 2);
+					cell.Cells[14].Value = Astt.ToString();
+					cls.Astt = Astt.ToString();
+					//if (Convert.ToDouble(Phi) < 24)
+					//{
+					//	cls.Thepdai = 6.ToString();
+					//	cell.Cells[15].Value = cls.Thepdai.ToString();
+
+					//}
+					//else
+					//{
+					//	cls.Thepdai = 8.ToString();
+					//	cell.Cells[15].Value = cls.Thepdai.ToString();
+
+					//}
+					//cls.Kcdai = (Convert.ToDouble(Phi) * 10).ToString();
+					//cell.Cells[16].Value = cls.Kcdai.ToString();
+
+					cell.Cells[17].Value = "Thỏa Mãn";
+					if (Astt < Convert.ToDouble(Asyc) && Convert.ToDouble(cell.Cells[16].Value)>100&& Convert.ToDouble(cell.Cells[16].Value)<300) cell.Cells[17].Value = "Không Thỏa Mãn";
+
+					cls_modul.danhsachcot.Add(cls);
+				}
+				catch (Exception ex) { }
+
+			}
+		}
+
+		private void button12_Click(object sender, EventArgs e)
+		{
+			dataGridView1.Rows.Clear();
+			cls_modul.danhsachcot.Clear();
+		}
+
+		private void button11_Click(object sender, EventArgs e)
+		{
+			if (dataGridView1.SelectedRows.Count > 0)
+			{
+				foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+				{
+					if (!row.IsNewRow) // Đảm bảo không xóa hàng mới được tạo trong DataGridView
+					{
+						dataGridView1.Rows.Remove(row);
+						int rowIndex = dataGridView1.CurrentRow.Index;
+					}
+				}
+			}
+			else
+			{
+				MessageBox.Show("Chọn hàng muốn xóa trước khi nhấn nút Xóa.");
+			}
+		}
+
+		private void button10_Click(object sender, EventArgs e)
+		{
+
+			cls_columns cls_Columns = new cls_columns();
+			cls_Columns.Stt = cls_modul.danhsachcot.Count.ToString();
+			cls_Columns.Id = textBox8.Text;
+			cls_Columns.Name = textBox9.Text;
+			cls_Columns.B = textBox1.Text;
+			cls_Columns.H = textBox2.Text;
+			cls_Columns.L = textBox3.Text;
+			cls_Columns.A = textBox11.Text;
+			cls_Columns.Mchancot = textBox4.Text;
+			cls_Columns.Nchancot = textBox5.Text;
+			cls_Columns.Mdinhcot = textBox6.Text;
+			cls_Columns.Ndinhcot = textBox7.Text;
+			//tính As yêu càu
+			List<double> doubles = TinhToan(Convert.ToDouble(cls_Columns.Mchancot), Convert.ToDouble(cls_Columns.Nchancot), Convert.ToDouble(cls_Columns.B), Convert.ToDouble(cls_Columns.H), Convert.ToDouble(cls_Columns.A), Convert.ToDouble(cls_Columns.L));
+			cls_Columns.Asyc = Math.Round(doubles[0] / 1000, 2).ToString();
+			//cls_modul.danhsachcot.Add(cls_Columns);
+			cls_modul.danhsachcot.Add(cls_Columns);
+			foreach (cls_columns cls in cls_modul.danhsachcot)
+			{
+				dataGridView1.Rows.Add(cls.Stt, cls.Id, cls.Name, cls.B, cls.H, cls.L, cls.A, cls.Mchancot
+		, cls.Nchancot, cls.Mdinhcot, cls.Ndinhcot, cls_Columns.Asyc.ToString());
+			}
+			//        dataGridView1.Rows.Add(index, textBox8.Text, textBox9.Text, textBox1.Text, textBox2.Text, textBox3.Text, textBox11.Text, textBox4.Text
+			//, textBox5.Text, textBox6.Text, textBox7.Text, cls_Columns.Asyc.ToString());
+
+			index++;
+		}
+	}
 }
