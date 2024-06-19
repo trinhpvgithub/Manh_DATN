@@ -32,19 +32,19 @@ namespace Nhom3
             if(dlg == System.Windows.Forms.DialogResult.OK)
             {
                 //chọn cột
-                IList<Reference> references = uidoc.Selection.PickObjects(ObjectType.Element, "Chọn một đối tượng");
+                Reference references = uidoc.Selection.PickObject(ObjectType.Element,"Chọn Cột");
                 List<Element> Colums = new List<Element>();
 
                 // Phân loại cột
-                foreach (Reference r in references)
-                {
-                    Element element = doc.GetElement(r);
+                //foreach (Reference r in references)
+                //{
+                    Element element = doc.GetElement(references);
                     if (element.Category.Name.Contains("Structural Columns"))
                     {
                         cls_modul.Idcolumns.Add(element.Id);
                         Colums.Add(element);
                     }
-                }
+                //}
                 //lấy cột đâu tiên trong danh sách
                 BoundingBoxXYZ bbox = Colums[0].get_BoundingBox(null);
                 double lengh = Math.Round((bbox.Max.Z - bbox.Min.Z) * 304.8)/1000;
