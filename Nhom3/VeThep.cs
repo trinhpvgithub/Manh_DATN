@@ -35,7 +35,41 @@ namespace Nhom3
 			}
 
 		}
-		public static void vethepdai(Autodesk.Revit.DB.Document doc, Element ptdam)
+		private static RebarShape getRebarShape(Autodesk.Revit.DB.Document doc, string rebaname)
+		{
+			//hinh dang thep
+			FilteredElementCollector fec = new FilteredElementCollector(doc).OfClass(typeof(RebarShape));
+			IList<Element> shapeElems = fec.ToElements();
+			foreach (var shapeElem in shapeElems)
+			{
+				RebarShape shape = shapeElem as RebarShape;
+				if (shape.Name.Contains(rebaname))
+					return shape;
+			}
+			return null;
+		}
+		private static bool GetHookTypes(Autodesk.Revit.DB.Document doc)
+		{
+			// Initialize the m_hookTypes which used to store all hook types.
+			FilteredElementCollector filteredElementCollector = new FilteredElementCollector(doc);
+			filteredElementCollector.OfClass(typeof(RebarHookType));
+			m_hookTypes = filteredElementCollector.Cast<RebarHookType>().ToList<RebarHookType>();
+
+			// If no hook types in revit return false, otherwise true
+			return (0 == m_hookTypes.Count) ? false : true;
+		}
+		private static bool GetRebarTypes(Autodesk.Revit.DB.Document doc)
+		{
+			// Initialize the m_rebarTypes which used to store all rebar types.
+			// Get all rebar types in revit and add them in m_rebarTypes
+			FilteredElementCollector filteredElementCollector = new FilteredElementCollector(doc);
+			filteredElementCollector.OfClass(typeof(RebarBarType));
+			m_rebarTypes = filteredElementCollector.Cast<RebarBarType>().ToList<RebarBarType>();
+
+			// If no rebar types in revit return false, otherwise true
+			return (0 == m_rebarTypes.Count) ? false : true;
+		}
+		public static void vethepdai(Autodesk.Revit.DB.Document doc, Element ptdam)	
 		{
 
 			GetRebarTypes(doc);
@@ -95,46 +129,46 @@ namespace Nhom3
 				ptdam.LookupParameter("Rebar Cover - Bottom Face").Set(rct.Id);
 				ptdam.LookupParameter("Rebar Cover - Other Faces").Set(rct.Id);
 				//========================= vec to chi phuong duoi len tren, trai qua phai
-				//XYZ normaltd = new XYZ(0, 0, 1); // phuong B
+				XYZ normaltd = new XYZ(0, 0, 1); // phuong B
 				//CreateRebar(doc, ptcot, barTypeTD, hookType);
-				//===============thep doc========================
-				//XYZ rebarLinestart = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv, origin.Z - hdam + lopbv);
-				//XYZ rebarLineEnd = new XYZ(origin.X - 0.5 * bdam + cdthongthuy + Util.MmToFoot(400), origin.Y - lopbv , origin.Z - hdam + lopbv );
-				//Line rebarLine = Line.CreateBound(rebarLinestart, rebarLineEnd);
+				//=============== thep doc ========================
+				XYZ rebarLinestart = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv, origin.Z - hdam + lopbv);
+				XYZ rebarLineEnd = new XYZ(origin.X - 0.5 * bdam + cdthongthuy + Util.MmToFoot(400), origin.Y - lopbv, origin.Z - hdam + lopbv);
+				Line rebarLine = Line.CreateBound(rebarLinestart, rebarLineEnd);
+
+				//Create the line rebar
+				IList<Curve> curvess = new List<Curve>();
+				curvess.Add(rebarLine);
+
+				Rebar rebartd = Rebar.CreateFromCurves(doc, Autodesk.Revit.DB.Structure.RebarStyle.Standard, barTypeTD, hookType, hookType,
+								ptdam, normaltd, curvess, RebarHookOrientation.Right, RebarHookOrientation.Left, true, true);
+				////so thanh + chieu dai noi
+				rebartd.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(3, bdam, true, true, true);
+
+
+				XYZ normaltd1 = new XYZ(1, 0, 0); // phuong h
+												  //CreateRebar(doc, ptcot, barTypeTD, hookType);
+												  //===============thep doc========================
+				XYZ rebarLinestart1 = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv, origin.Z - lopbv);
+				XYZ rebarLineEnd1 = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv + cdthongthuy + Util.MmToFoot(400), origin.Z - lopbv);
+				Line rebarLine1 = Line.CreateBound(rebarLinestart1, rebarLineEnd1);
 
 				// Create the line rebar
-				//IList<Curve> curvess = new List<Curve>();
-				//curvess.Add(rebarLine);
+				IList<Curve> curvess1 = new List<Curve>();
+				curvess1.Add(rebarLine1);
 
-				//Rebar rebartd = Rebar.CreateFromCurves(doc, Autodesk.Revit.DB.Structure.RebarStyle.Standard, barTypeTD, hookType, hookType,
-				//                ptdam, normaltd, curvess, RebarHookOrientation.Right, RebarHookOrientation.Left, true, true);
+				Rebar rebartd1 = Rebar.CreateFromCurves(doc, Autodesk.Revit.DB.Structure.RebarStyle.Standard, barTypeTD, hookType, hookType,
+								ptdam, normaltd1, curvess1, RebarHookOrientation.Right, RebarHookOrientation.Left, true, true);
 				//////so thanh + chieu dai noi
-				//rebartd.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(3, bdam, true, true, true);
+				rebartd1.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(3, bdam, true, true, true);
 
+				//==============chan cot - mong len=============
 
-				//XYZ normaltd1 = new XYZ(1, 0, 0); // phuong h
-				////CreateRebar(doc, ptcot, barTypeTD, hookType);
-				////===============thep doc========================
-				//XYZ rebarLinestart1 = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv, origin.Z -lopbv);
-				//XYZ rebarLineEnd1 = new XYZ(origin.X - 0.5 * bdam, origin.Y - lopbv + cdthongthuy + Util.MmToFoot(400), origin.Z - lopbv);
-				//Line rebarLine1 = Line.CreateBound(rebarLinestart1, rebarLineEnd1);
+				//==============tang trung gian=================
 
-				//// Create the line rebar
-				//IList<Curve> curvess1 = new List<Curve>();
-				//curvess1.Add(rebarLine1);
+				//==============dinh cot=======================
 
-				//Rebar rebartd1 = Rebar.CreateFromCurves(doc, Autodesk.Revit.DB.Structure.RebarStyle.Standard, barTypeTD, hookType, hookType,
-				//                ptdam, normaltd1, curvess1, RebarHookOrientation.Right, RebarHookOrientation.Left, true, true);
-				////////so thanh + chieu dai noi
-				//rebartd1.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(3, bdam, true, true, true);
-
-				////==============chan cot - mong len=============
-
-				////==============tang trung gian=================
-
-				////==============dinh cot=======================
-
-				////===============THEP DAI - truong họp noi thep chan cot =============================         
+				//===============THEP DAI - truong họp noi thep chan cot =============================         
 				//========================= vec to chi phuong
 				XYZ normal = new XYZ(0, 1, 0);
 				// dai vuong
@@ -202,39 +236,9 @@ namespace Nhom3
 			}
 
 		}
-		private static RebarShape getRebarShape(Autodesk.Revit.DB.Document doc, string rebaname)
+		public static void vethepchu(Document doc,Element ptcot)
 		{
-			//hinh dang thep
-			FilteredElementCollector fec = new FilteredElementCollector(doc).OfClass(typeof(RebarShape));
-			IList<Element> shapeElems = fec.ToElements();
-			foreach (var shapeElem in shapeElems)
-			{
-				RebarShape shape = shapeElem as RebarShape;
-				if (shape.Name.Contains(rebaname))
-					return shape;
-			}
-			return null;
-		}
-		private static bool GetHookTypes(Autodesk.Revit.DB.Document doc)
-		{
-			// Initialize the m_hookTypes which used to store all hook types.
-			FilteredElementCollector filteredElementCollector = new FilteredElementCollector(doc);
-			filteredElementCollector.OfClass(typeof(RebarHookType));
-			m_hookTypes = filteredElementCollector.Cast<RebarHookType>().ToList<RebarHookType>();
 
-			// If no hook types in revit return false, otherwise true
-			return (0 == m_hookTypes.Count) ? false : true;
-		}
-		private static bool GetRebarTypes(Autodesk.Revit.DB.Document doc)
-		{
-			// Initialize the m_rebarTypes which used to store all rebar types.
-			// Get all rebar types in revit and add them in m_rebarTypes
-			FilteredElementCollector filteredElementCollector = new FilteredElementCollector(doc);
-			filteredElementCollector.OfClass(typeof(RebarBarType));
-			m_rebarTypes = filteredElementCollector.Cast<RebarBarType>().ToList<RebarBarType>();
-
-			// If no rebar types in revit return false, otherwise true
-			return (0 == m_rebarTypes.Count) ? false : true;
 		}
 	}
 }

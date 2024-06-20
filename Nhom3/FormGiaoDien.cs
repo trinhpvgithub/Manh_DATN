@@ -633,5 +633,10 @@ namespace Nhom3
 
 			index++;
 		}
+
+		private void thep_Click(object sender, EventArgs e)
+		{
+            DialogResult = DialogResult.Yes;
+		}
 	}
 }
