@@ -150,7 +150,7 @@ namespace Nhom3
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)// nhận dữ liệu thép và bê tông
         {
             //bê tông
             cls_modul.Chonbetong.Max = comboBox1.Text;
@@ -511,7 +511,7 @@ namespace Nhom3
 			DialogResult = DialogResult.OK;
 		}
 
-		private void button8_Click(object sender, EventArgs e)
+		private void button8_Click(object sender, EventArgs e)// tính toán thép
 		{
 			cls_modul.danhsachcot.Clear();
 			//lọc qua các hàng kiểm tra điều kiện As ->> đưa ra kết quả
@@ -584,7 +584,7 @@ namespace Nhom3
 			cls_modul.danhsachcot.Clear();
 		}
 
-		private void button11_Click(object sender, EventArgs e)
+		private void button11_Click(object sender, EventArgs e)//xóa
 		{
 			if (dataGridView1.SelectedRows.Count > 0)
 			{
@@ -603,7 +603,7 @@ namespace Nhom3
 			}
 		}
 
-		private void button10_Click(object sender, EventArgs e)
+		private void button10_Click(object sender, EventArgs e)// thêm vào danh sách dầm
 		{
 
 			cls_columns cls_Columns = new cls_columns();

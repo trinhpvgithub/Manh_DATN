@@ -20,12 +20,12 @@ namespace Nhom3
         Autodesk.Revit.ApplicationServices.Application app;
         Document doc;
         ExternalCommandData revit;
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)//class chính chạy chương trình
         {
             uiapp = commandData.Application;
             uidoc = uiapp.ActiveUIDocument;
             app = uiapp.Application;
-            doc = uidoc.Document;
+            doc = uidoc.Document;//lây môi trường revit để thực thi
             revit = commandData;
             FormGiaoDien frm = new FormGiaoDien();
             var dlg = frm.ShowDialog();
@@ -60,7 +60,7 @@ namespace Nhom3
                 frm.kichthuoc(w, h,l, Colums[0]);
                 //Execute(commandData, ref message, elements);
                 dlg = frm.ShowDialog();
-            }
+            }//chọn và lấy thông tin cột
             if (dlg == System.Windows.Forms.DialogResult.Yes)
             {
                 //Vẽ thép
@@ -107,7 +107,7 @@ namespace Nhom3
 
                 }
                 dlg = frm.ShowDialog();
-            }
+            }//vẽ thép
             return Result.Succeeded;        
         }
         private List<List<Curve>> Getlstcurve(cls_columns cls_Columns, ElementId id)

@@ -7,7 +7,7 @@ using Autodesk.Revit.DB;
 
 namespace Nhom3
 {
-    internal class cls_columns
+    internal class cls_columns//đại diện cho 1 cột
     {
 
         XYZ location = new XYZ();
