@@ -64,7 +64,7 @@ namespace Nhom3
             if (dlg == System.Windows.Forms.DialogResult.Yes)
             {
                 //Vẽ thép
-                foreach (cls_columns clm in cls_modul.cotvethep)
+                foreach (cls_columns clm in cls_modul.danhsachcot)
                 {
                     ElementId clmid = null;
                     foreach (ElementId elementId in cls_modul.Idcolumns)
@@ -74,8 +74,6 @@ namespace Nhom3
                             clmid = elementId;
                             break;
                         }
-
-
                     }
                     if (clmid == null) break;
                     Element column = doc.GetElement(clmid);
@@ -83,7 +81,7 @@ namespace Nhom3
                     //lấy vextor thép
                     List<List<Curve>> curves = Getlstcurve(clm, clmid);
                     LocationPoint locp = column.Location as LocationPoint;
-                    XYZ location = locp.Point;
+                    XYZ location = (column as FamilyInstance).HandOrientation;
                     double a = Convert.ToDouble(clm.A) /304.8*1000;
                     double b = Convert.ToDouble(clm.H) /304.8 *1000;
                     foreach (List<Curve> curve in curves)
@@ -95,10 +93,10 @@ namespace Nhom3
                             barType.BarDiameter = Convert.ToDouble(clm.Phi) / 304.8 ;
                             // Tạo đối tượng Rebar
                             Rebar rebar = Rebar.CreateFromCurves(doc, RebarStyle.Standard, barType, null, null, column, location, curve,
-                                                                 RebarHookOrientation.Left, RebarHookOrientation.Left, true, true);
+                                                                 RebarHookOrientation.Left, RebarHookOrientation.Left, false, true);
                             if (rebar != null)
                             {
-                                rebar.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(2, (b - 2 * a), true, true, true);
+                                rebar.GetShapeDrivenAccessor().SetLayoutAsFixedNumber(2, (b-2*a), true, true, true);
                             }
                             transaction.Commit();
                         }
