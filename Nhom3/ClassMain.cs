@@ -9,6 +9,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using HcBimUtils.DocumentUtils;
+using HcBimUtils;
+using System.Security.Cryptography;
 
 namespace Nhom3
 {
@@ -77,7 +80,27 @@ namespace Nhom3
                     }
                     if (clmid == null) break;
                     Element column = doc.GetElement(clmid);
-                    Level level = doc.GetElement(column.LevelId) as Level;
+                    //vẽ thép đai
+                    var cur=GetPointCol(column);
+					IList<Curve> curve1s = new List<Curve>();
+                    curve1s.Add(Line.CreateBound(cur[0], cur[1]));
+                    curve1s.Add(Line.CreateBound(cur[1], cur[2]));
+                    curve1s.Add(Line.CreateBound(cur[2], cur[3]));
+                    curve1s.Add(Line.CreateBound(cur[3], cur[0]));
+					var vectorX = cur[1] - cur[0];
+					var vectorY = cur[3] - cur[0];
+                    var tran = new Transaction(doc, "dai");
+                    tran.Start();
+					RebarBarType barType1 = RebarBarType.Create(doc);
+					barType1.BarDiameter = Convert.ToDouble(clm.Thepdai) / 304.8;
+                    var kc=Convert.ToDouble(clm.Kcdai);
+					Rebar rebar1 = Rebar.CreateFromCurves(doc, RebarStyle.Standard, barType1, null, null, column, XYZ.BasisZ, curve1s,
+																 RebarHookOrientation.Left, RebarHookOrientation.Left, false, true);
+					RebarShape rbsh = getRebarShape(doc, "M_T1");
+					rebar1.LookupParameter("Shape").Set(rbsh.Id);
+					rebar1.GetShapeDrivenAccessor().SetLayoutAsNumberWithSpacing(Convert.ToInt32(Convert.ToDouble(clm.L)*1000/kc),kc.MmToFoot(), true, true, true);
+                    tran.Commit();
+					Level level = doc.GetElement(column.LevelId) as Level;
                     //lấy vextor thép
                     List<List<Curve>> curves = Getlstcurve(clm, clmid);
                     LocationPoint locp = column.Location as LocationPoint;
@@ -108,7 +131,20 @@ namespace Nhom3
             }//vẽ thép
             return Result.Succeeded;        
         }
-        private List<List<Curve>> Getlstcurve(cls_columns cls_Columns, ElementId id)
+		private RebarShape getRebarShape(Autodesk.Revit.DB.Document doc, string rebaname)
+		{
+			//hinh dang thep
+			FilteredElementCollector fec = new FilteredElementCollector(doc).OfClass(typeof(RebarShape));
+			IList<Element> shapeElems = fec.ToElements();
+			foreach (var shapeElem in shapeElems)
+			{
+				RebarShape shape = shapeElem as RebarShape;
+				if (shape.Name.Contains(rebaname))
+					return shape;
+			}
+			return null;
+		}
+		private List<List<Curve>> Getlstcurve(cls_columns cls_Columns, ElementId id)
         {
             //method lấy vector thép
             double a = Convert.ToDouble( cls_Columns.A)/304.8*1000;
@@ -134,7 +170,21 @@ namespace Nhom3
 
             return curves;
         }
-
-    }
+		public List<XYZ> GetPointCol(Element coll)//lấy 4 điểmm của cột
+		{
+			var col = coll as FamilyInstance;
+			var oriPoint = (col.Location as LocationPoint).Point.Add(XYZ.BasisZ*25.MmToFoot());
+			var type = doc.GetElement(col.GetTypeId()) as ElementType;
+			var w = type.LookupParameter("b").AsDouble()-50.MmToFoot();
+			var l = type.LookupParameter("h").AsDouble()-50.MmToFoot();
+			var facing = col.FacingOrientation.Normalize();
+			var hand = col.HandOrientation.Normalize();
+			var p1 = oriPoint.Add(-hand * w / 2 + -facing * l / 2);
+			var p2 = oriPoint.Add(hand * w / 2 + -facing * l / 2);
+			var p3 = p2.Add(facing * l);
+			var p4 = p1.Add(facing * l);
+			return new List<XYZ>() { p1, p2, p3, p4 };
+		}
+	}
 
 }

@@ -86,7 +86,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SectionColumn.cs" />
     <Compile Include="Thep.cs" />
     <Compile Include="ClassMain.cs" />
     <Compile Include="FormGiaoDien.cs">

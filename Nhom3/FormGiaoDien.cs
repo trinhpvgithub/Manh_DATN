@@ -166,6 +166,7 @@ namespace Nhom3
             cls_modul.Thepdai.Rs = Convert.ToDouble(textBox19.Text);
             cls_modul.Thepdai.Rsw = Convert.ToDouble(textBox20.Text);
             cls_modul.Thepdai.Rsc = Convert.ToDouble(textBox21.Text);
+			MessageBox.Show("Cài đặt thép thành công");
         }
 
 		private void button1_Click_1(object sender, EventArgs e)
@@ -409,7 +410,8 @@ namespace Nhom3
 					cls.Astt = Astt.ToString();
 					if (Convert.ToDouble(Phi) < 24)
 					{
-						cls.Thepdai = 6.ToString();
+						cls.
+							Thepdai = 6.ToString();
 						cell.Cells[15].Value = cls.Thepdai.ToString();
 
 					}
@@ -553,6 +555,8 @@ namespace Nhom3
 					double Astt = Math.Round(Astinhtoan(Convert.ToDouble(Phi), Convert.ToDouble(Thanh)), 2);
 					cell.Cells[14].Value = Astt.ToString();
 					cls.Astt = Astt.ToString();
+					cls.Thepdai = cell.Cells[15].Value.ToString();
+					cls.Kcdai = cell.Cells[16].Value.ToString();
 					//if (Convert.ToDouble(Phi) < 24)
 					//{
 					//	cls.Thepdai = 6.ToString();
